@@ -11,3 +11,8 @@ requires 'HTTP::XSCookies';
 requires 'Scope::Upper';
 requires 'Type::Tiny::XS';
 requires 'URL::Encode::XS';
+
+on 'develop' => sub {
+    requires 'Data::Dumper';
+    suggests 'Devel::NYTProf';
+}

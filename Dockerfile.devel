@@ -1,0 +1,22 @@
+## This is based off of the perl BUILD image.  It will not be expored and
+## merged with the runtime image because it is intended to be a 'stack'
+## image.  Dancer2, Gazelle, and TemplateToolkit will be installed so that
+## this image can be used as a base build image for Dancer2 applications.
+## when dockerizing THOSE applications, they should be merged back into the
+## runtime image.
+FROM whosgonna/dancer2-tt-gazelle:latest
+
+COPY cpanfile* /home/perl
+
+## A development image COULD be built here.  Note that the user is changed to
+## root to install an APK, but then changed back to install the perl libraries
+USER root
+RUN apk add --no-cache emacs bash git
+
+USER perl
+## The cpm install is a bit more complicated here because we don't want to
+## install the modules that are indicated only for configuration.
+RUN cpm install --no-prebuilt --workers 16 --with-develop --without-configure --with-suggests \
+     && carton install --without configure
+
+CMD /bin/bash
